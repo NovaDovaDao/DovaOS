@@ -6,7 +6,7 @@ import { useChat } from '@renderer/feature/chat/useChat'
 import ChatInput from './ChatInput'
 import AppAlert from '@renderer/components/app/AppAlert'
 import { Message } from './chat.types'
-// import AgentModal from "../agent/AgentModal";
+import AgentModal from '@renderer/components/agent/AgentModal'
 
 const ChatWindow = (): JSX.Element => {
   const { error, messages, isLoading } = useChat()
@@ -25,7 +25,15 @@ const ChatWindow = (): JSX.Element => {
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center">
       <div className="w-full max-w-3xl px-4">
-        {/* Messages area */}
+        {/* Agent Modal Button */}
+        <div className="fixed top-8 right-8 z-50 animate-fadeIn">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+            <AgentModal />
+          </div>
+        </div>
+
+        {/* Messages Area */}
         {messages.length > 0 && (
           <div className="relative flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent mb-8">
             <div className="space-y-4">
@@ -44,14 +52,13 @@ const ChatWindow = (): JSX.Element => {
               ))}
               <div ref={lastEl} />
             </div>
-            {/* {chatLog.length > 0 && <AgentModal />} */}
           </div>
         )}
 
-        {/* Error alert */}
+        {/* Error Alert */}
         {error && <AppAlert className="mb-4">{error.message}</AppAlert>}
 
-        {/* Chat input */}
+        {/* Chat Input */}
         <ChatInput />
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { useAppStore } from "@/stores/app";
+// src/renderer/src/components/agent/AgentModal.tsx
+import { useAppStore } from '@renderer/stores/app'
 import {
   Button,
   Dialog,
@@ -8,98 +9,140 @@ import {
   Fieldset,
   Input,
   Label,
-  Textarea,
-} from "@headlessui/react";
-import { clsx } from "clsx";
+  Textarea
+} from '@headlessui/react'
+import { Settings } from 'lucide-react'
+import { clsx } from 'clsx'
 
-export default function AgentModal() {
-  const { isAgentModalOpen, setIsAgentModalOpen } = useAppStore();
+export default function AgentModal(): JSX.Element {
+  const { isAgentModalOpen, setIsAgentModalOpen } = useAppStore()
 
-  function open() {
-    setIsAgentModalOpen(true);
+  function open(): void {
+    setIsAgentModalOpen(true)
   }
 
-  function close() {
-    setIsAgentModalOpen(false);
+  function close(): void {
+    setIsAgentModalOpen(false)
   }
 
   return (
     <>
       <Button
         onClick={open}
-        className="rounded-md bg-pink-400/20 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-black/30 data-[focus]:outline-1 data-[focus]:outline-white"
+        className={clsx(
+          'relative flex items-center gap-2 rounded-lg bg-black/40 backdrop-blur-sm',
+          'py-2 px-4 text-sm font-medium text-white shadow-lg',
+          'transition-all duration-300 ease-out',
+          'hover:bg-black/60 hover:scale-105 hover:shadow-pink-500/20',
+          'focus:outline-none focus:ring-2 focus:ring-pink-500/40',
+          'group'
+        )}
       >
-        Open dialog
+        <Settings className="w-4 h-4 transition-transform group-hover:rotate-180" />
+        Configure Agent
       </Button>
 
-      <Dialog
-        open={isAgentModalOpen}
-        as="div"
-        className="relative z-10 focus:outline-none"
-        onClose={close}
-        __demoMode
-      >
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <DialogPanel
-              transition
-              className="w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
-            >
-              <DialogTitle
-                as="h3"
-                className="text-base/7 font-medium text-white"
+      <Dialog open={isAgentModalOpen} onClose={close} className="relative z-50">
+        {/* Backdrop */}
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
+
+        {/* Full-screen container */}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel
+            className={clsx(
+              'w-full max-w-md transform overflow-hidden rounded-2xl',
+              'bg-gradient-to-br from-black/90 to-black/70 p-6 backdrop-blur-xl',
+              'shadow-[0_0_50px_-12px] shadow-pink-500/30',
+              'transition-all duration-300',
+              'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+              'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95'
+            )}
+          >
+            <DialogTitle className="text-xl font-bold text-white mb-4">
+              Agent Configuration
+            </DialogTitle>
+
+            <AgentConfiguration />
+
+            <div className="mt-6 flex justify-end gap-3">
+              <Button
+                onClick={close}
+                className={clsx(
+                  'px-4 py-2 rounded-lg',
+                  'bg-white/5 text-white',
+                  'hover:bg-white/10 transition-colors',
+                  'focus:outline-none focus:ring-2 focus:ring-pink-500/40'
+                )}
               >
-                Agent Configuration
-              </DialogTitle>
-              <p className="my-2 text-sm/6 text-white/50">
-                Your payment has been successfully submitted. We’ve sent you an
-                email with all of the details of your order.
-              </p>
-              <AgentConfiguration />
-              <div className="mt-4 space-x-4">
-                <Button
-                  className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-                  onClick={close}
-                >
-                  Update
-                </Button>
-                <Button
-                  className="inline-flex items-center gap-2 rounded-md bg-pink-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-                  onClick={close}
-                >
-                  Deploy
-                </Button>
-              </div>
-            </DialogPanel>
-          </div>
+                Cancel
+              </Button>
+              <Button
+                onClick={close}
+                className={clsx(
+                  'px-4 py-2 rounded-lg',
+                  'bg-gradient-to-r from-pink-500 to-purple-500',
+                  'text-white font-medium',
+                  'hover:from-pink-600 hover:to-purple-600',
+                  'transition-all duration-300',
+                  'focus:outline-none focus:ring-2 focus:ring-pink-500/40'
+                )}
+              >
+                Save Changes
+              </Button>
+            </div>
+          </DialogPanel>
         </div>
       </Dialog>
     </>
-  );
+  )
 }
 
-const AgentConfiguration = () => {
+const AgentConfiguration = (): JSX.Element => {
   return (
-    <Fieldset className="space-y-6">
+    <Fieldset className="space-y-4">
       <Field>
-        <Label className="text-sm/6 font-medium text-white">Name</Label>
+        <Label className="text-sm font-medium text-white/90">Name</Label>
         <Input
           className={clsx(
-            "mt-3 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white",
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+            'mt-1.5 w-full rounded-lg',
+            'bg-white/5 border-white/10',
+            'text-white placeholder-white/30',
+            'focus:border-pink-500/50 focus:ring-pink-500/30',
+            'transition-colors duration-200'
           )}
+          placeholder="Enter agent name..."
         />
       </Field>
+
       <Field>
-        <Label className="text-sm/6 font-medium text-white">Description</Label>
+        <Label className="text-sm font-medium text-white/90">Description</Label>
         <Textarea
           className={clsx(
-            "mt-3 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white",
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+            'mt-1.5 w-full rounded-lg',
+            'bg-white/5 border-white/10',
+            'text-white placeholder-white/30',
+            'focus:border-pink-500/50 focus:ring-pink-500/30',
+            'transition-colors duration-200',
+            'min-h-[100px] resize-none'
           )}
-          rows={3}
+          placeholder="Describe your agent's purpose..."
+        />
+      </Field>
+
+      <Field>
+        <Label className="text-sm font-medium text-white/90">System Message</Label>
+        <Textarea
+          className={clsx(
+            'mt-1.5 w-full rounded-lg',
+            'bg-white/5 border-white/10',
+            'text-white placeholder-white/30',
+            'focus:border-pink-500/50 focus:ring-pink-500/30',
+            'transition-colors duration-200',
+            'min-h-[100px] resize-none'
+          )}
+          placeholder="Define the agent's behavior..."
         />
       </Field>
     </Fieldset>
-  );
-};
+  )
+}
