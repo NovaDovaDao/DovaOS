@@ -9,13 +9,36 @@ import {
   Fieldset,
   Input,
   Label,
-  Textarea
+  Textarea,
+  Switch
 } from '@headlessui/react'
-import { Settings } from 'lucide-react'
+import {
+  Settings,
+  MessageSquare, // for Discord
+  Send, // for Telegram
+  XIcon // for Twitter/X
+} from 'lucide-react'
 import { clsx } from 'clsx'
+import { useState } from 'react'
+
+interface PlatformConfig {
+  enabled: boolean
+  credentials?: string
+}
+
+interface AgentPlatforms {
+  x: PlatformConfig
+  discord: PlatformConfig
+  telegram: PlatformConfig
+}
 
 export default function AgentModal(): JSX.Element {
   const { isAgentModalOpen, setIsAgentModalOpen } = useAppStore()
+  const [platforms, setPlatforms] = useState<AgentPlatforms>({
+    x: { enabled: false },
+    discord: { enabled: false },
+    telegram: { enabled: false }
+  })
 
   function open(): void {
     setIsAgentModalOpen(true)
@@ -43,10 +66,8 @@ export default function AgentModal(): JSX.Element {
       </Button>
 
       <Dialog open={isAgentModalOpen} onClose={close} className="relative z-50">
-        {/* Backdrop */}
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
 
-        {/* Full-screen container */}
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel
             className={clsx(
@@ -62,7 +83,7 @@ export default function AgentModal(): JSX.Element {
               Agent Configuration
             </DialogTitle>
 
-            <AgentConfiguration />
+            <AgentConfiguration platforms={platforms} setPlatforms={setPlatforms} />
 
             <div className="mt-6 flex justify-end gap-3">
               <Button
@@ -97,9 +118,21 @@ export default function AgentModal(): JSX.Element {
   )
 }
 
-const AgentConfiguration = (): JSX.Element => {
+interface AgentConfigurationProps {
+  platforms: AgentPlatforms
+  setPlatforms: React.Dispatch<React.SetStateAction<AgentPlatforms>>
+}
+
+const AgentConfiguration = ({ platforms, setPlatforms }: AgentConfigurationProps): JSX.Element => {
+  const togglePlatform = (platform: keyof AgentPlatforms) => {
+    setPlatforms((prev) => ({
+      ...prev,
+      [platform]: { ...prev[platform], enabled: !prev[platform].enabled }
+    }))
+  }
+
   return (
-    <Fieldset className="space-y-4">
+    <Fieldset className="space-y-6">
       <Field>
         <Label className="text-sm font-medium text-white/90">Name</Label>
         <Input
@@ -129,7 +162,86 @@ const AgentConfiguration = (): JSX.Element => {
         />
       </Field>
 
-      <Field>
+      <div className="space-y-4">
+        <Label className="text-sm font-medium text-white/90">Platforms</Label>
+
+        <div className="space-y-3">
+          {/* X Platform */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <XIcon className="w-5 h-5 text-white/70" />
+              <span className="text-sm text-white">X</span>
+            </div>
+            <Switch
+              checked={platforms.x.enabled}
+              onChange={() => togglePlatform('x')}
+              className={clsx(
+                platforms.x.enabled ? 'bg-pink-500' : 'bg-white/10',
+                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors'
+              )}
+            >
+              <span className="sr-only">Enable X Platform</span>
+              <span
+                className={clsx(
+                  platforms.x.enabled ? 'translate-x-6' : 'translate-x-1',
+                  'inline-block h-4 w-4 rounded-full bg-white transition-transform'
+                )}
+              />
+            </Switch>
+          </div>
+
+          {/* Discord Platform */}
+
+          <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <MessageSquare className="w-5 h-5 text-white/70" />
+              <span className="text-sm text-white">Discord</span>
+            </div>
+            <Switch
+              checked={platforms.discord.enabled}
+              onChange={() => togglePlatform('discord')}
+              className={clsx(
+                platforms.discord.enabled ? 'bg-pink-500' : 'bg-white/10',
+                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors'
+              )}
+            >
+              <span className="sr-only">Enable Discord Platform</span>
+              <span
+                className={clsx(
+                  platforms.discord.enabled ? 'translate-x-6' : 'translate-x-1',
+                  'inline-block h-4 w-4 rounded-full bg-white transition-transform'
+                )}
+              />
+            </Switch>
+          </div>
+
+          {/* Telegram Platform */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <Send className="w-5 h-5 text-white/70" />
+              <span className="text-sm text-white">Telegram</span>
+            </div>
+            <Switch
+              checked={platforms.telegram.enabled}
+              onChange={() => togglePlatform('telegram')}
+              className={clsx(
+                platforms.telegram.enabled ? 'bg-pink-500' : 'bg-white/10',
+                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors'
+              )}
+            >
+              <span className="sr-only">Enable Telegram Platform</span>
+              <span
+                className={clsx(
+                  platforms.telegram.enabled ? 'translate-x-6' : 'translate-x-1',
+                  'inline-block h-4 w-4 rounded-full bg-white transition-transform'
+                )}
+              />
+            </Switch>
+          </div>
+        </div>
+      </div>
+
+      {/* <Field>
         <Label className="text-sm font-medium text-white/90">System Message</Label>
         <Textarea
           className={clsx(
@@ -142,7 +254,7 @@ const AgentConfiguration = (): JSX.Element => {
           )}
           placeholder="Define the agent's behavior..."
         />
-      </Field>
+      </Field> */}
     </Fieldset>
   )
 }
