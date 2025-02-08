@@ -15,6 +15,16 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    server: {
+      proxy: {
+        '/api': {
+          // All requests starting with /api will be proxied
+          target: 'http://localhost:3000', // Your backend URL
+          changeOrigin: true, // Required for CORS to work
+          rewrite: (path) => path.replace(/^\/api/, '') // Optional: remove /api prefix
+        }
+      }
+    }
   }
 })
