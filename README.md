@@ -27,6 +27,7 @@ $ pnpm dev
 Before building the application, ensure the core components are built using the provided build script:
 
 ```bash
+$ git submodule update --init
 $ ./build-eliza.sh  # Build the underlying Eliza components. This is CRUCIAL!
 ```
 
