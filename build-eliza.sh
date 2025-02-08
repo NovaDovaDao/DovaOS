@@ -6,6 +6,14 @@ handle_error() {
   exit 1
 }
 
+# 0. Check for ./.env and copy it to ./src-eliza/.env
+if [ ! -f ./.env ]; then
+  handle_error ".env file not found in the current directory. ⚠️"
+fi
+
+cp ./.env ./src-eliza/.env || handle_error "Failed to copy ./.env to ./src-eliza/.env 📥"
+echo "✅ .env file copied successfully! 🎉"
+
 # 1. Change directory
 cd ./src-eliza || handle_error "Could not change directory to ./src-eliza 📁"
 
