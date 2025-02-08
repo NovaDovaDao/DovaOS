@@ -1,10 +1,10 @@
-import { ComponentPropsWithoutRef } from "react";
+import { ComponentPropsWithoutRef } from 'react'
 
 export default function AppAlert({
   children,
   className,
   ...props
-}: ComponentPropsWithoutRef<"p">) {
+}: ComponentPropsWithoutRef<'p'>): JSX.Element {
   return (
     <p
       {...props}
@@ -12,5 +12,5 @@ export default function AppAlert({
     >
       {children}
     </p>
-  );
+  )
 }
