@@ -57,10 +57,12 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  const appPath = app.getAppPath()
+  const backendPath = join(appPath, 'src-eliza')
   backendProcess = spawn(
     'pnpm',
     ['run', 'start', '--character=./characters/spanish_trump.character.json'],
-    { cwd: './src-eliza' }
+    { cwd: backendPath }
   )
 
   backendProcess.stdout.on('data', (data) => {
