@@ -6,11 +6,11 @@ import clsx from 'clsx'
 
 type Props = {
   isLoading: boolean
-  onSubmit: (message: string) => void
+  onSendMessage: (message: string) => void
 }
 export default function ChatInput({
   isLoading,
-  onSubmit,
+  onSendMessage,
   className,
   ...props
 }: ComponentProps<'div'> & Props): JSX.Element {
@@ -22,7 +22,7 @@ export default function ChatInput({
     e.stopPropagation()
     if (!inputValue.trim()) return
 
-    onSubmit(inputValue)
+    onSendMessage(inputValue)
     setInputValue('')
   }
 

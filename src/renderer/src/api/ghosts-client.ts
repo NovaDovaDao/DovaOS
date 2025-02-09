@@ -18,3 +18,19 @@ ghostsClient.interceptors.request.use(
 )
 
 export default ghostsClient
+
+export interface Message {
+  content: string
+  timestamp: number
+  role: 'user' | 'agent' | 'system'
+}
+
+export const getDovaChatHistory = async () => {
+  const { data } = await ghostsClient.get<Message[]>('/chat')
+  return data
+}
+
+export const sendDovaMessage = async (payload: { content: Message['content'] }) => {
+  const { data } = await ghostsClient.post<Message>('/chat', payload)
+  return data
+}

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState } from 'react'
+import AppButton from '@renderer/components/app/AppButton'
 
 interface PlatformConfig {
   enabled: boolean
@@ -50,20 +51,10 @@ export default function AgentModal(): JSX.Element {
 
   return (
     <>
-      <Button
-        onClick={open}
-        className={clsx(
-          'relative flex items-center gap-2 rounded-lg bg-black/40 backdrop-blur-sm',
-          'py-2 px-4 text-sm font-medium text-white shadow-lg',
-          'transition-all duration-300 ease-out',
-          'hover:bg-black/60 hover:scale-105 hover:shadow-pink-500/20',
-          'focus:outline-none focus:ring-2 focus:ring-pink-500/40',
-          'group'
-        )}
-      >
+      <AppButton onClick={open}>
         <Settings className="w-4 h-4 transition-transform group-hover:rotate-180" />
         Configure Agent
-      </Button>
+      </AppButton>
 
       <Dialog open={isAgentModalOpen} onClose={close} className="relative z-50">
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />

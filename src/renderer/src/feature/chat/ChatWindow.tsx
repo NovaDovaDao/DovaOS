@@ -7,12 +7,13 @@ import { useChat, useSendMessage } from './useChat'
 import GlowingLogo from '@renderer/components/app/GlowingLogo'
 import AppAlert from '@renderer/components/app/AppAlert'
 import ChatInput from '@renderer/components/chat/ChatInput'
-import { Message } from './chat.types'
 import AgentModal from '../agents/AgentModal'
 import AgentsDialog from '../agents/AgentsDialog'
+import { Message } from '@renderer/api/ghosts-client'
+import AppLogo from '@renderer/components/app/AppLogo'
 
 const ChatWindow = (): JSX.Element => {
-  const { agentId } = useAppStore()
+  const { agentId, setAgentId } = useAppStore()
   const { error, messages, isLoading } = useChat(agentId)
   const { sendMessage, isPending } = useSendMessage(agentId)
 
@@ -25,8 +26,10 @@ const ChatWindow = (): JSX.Element => {
 
   return (
     <div className="flex flex-col h-full">
-      <header className="flex items-center justify-between p-4 bg-black border-b">
-        <GlowingLogo />
+      <header className="flex items-center justify-between p-4 bg-black border-b border-neutral-800">
+        <button onClick={() => setAgentId(null)}>
+          <AppLogo />
+        </button>
         <nav className="flex gap-4">
           {/* Action Buttons */}
           {/* <div className="fixed top-8 right-8 z-50 flex gap-4 animate-fadeIn">
@@ -71,7 +74,7 @@ const ChatWindow = (): JSX.Element => {
       <ChatInput
         className="p-4"
         isLoading={isPending}
-        onSubmit={(message) => sendMessage({ content: message })}
+        onSendMessage={(message) => sendMessage({ content: message })}
       />
     </div>
   )

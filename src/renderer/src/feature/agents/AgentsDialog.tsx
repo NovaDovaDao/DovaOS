@@ -48,7 +48,7 @@ export default function AgentsDialog(): JSX.Element {
                   'scrollbar-thin scrollbar-track-black/20 scrollbar-thumb-purple-500/50'
                 )}
               >
-                <AgentList className="p-2" />
+                <AgentList includeDova className="p-2" />
               </div>
 
               <div className="mt-6 flex justify-end">
