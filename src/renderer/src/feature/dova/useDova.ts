@@ -21,7 +21,7 @@ export const useDovaChat = () => {
   })
 
   const messages = useMemo(
-    () => (data ? data.sort((a, b) => a.timestamp - b.timestamp) : []),
+    () => (data && Array.isArray(data) ? data.sort((a, b) => a.timestamp - b.timestamp) : []),
     [data]
   )
 
