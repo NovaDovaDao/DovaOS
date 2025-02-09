@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import ChatWindow from '@renderer/feature/chat/ChatWindow'
 import AppFooter from './components/app/AppFooter'
+import DovaInterface from './feature/dova/DovaInterface'
 
 const queryClient = new QueryClient()
 
@@ -11,7 +11,7 @@ function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <div className="h-screen flex flex-col">
         <main className="flex-1 overflow-auto">
-          <ChatWindow />
+          <DovaInterface />
         </main>
         <AppFooter className="border-t border-neutral-800" />
       </div>

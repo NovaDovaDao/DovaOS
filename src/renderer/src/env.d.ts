@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_COMMIT_HASH: string
+  readonly VITE_REST_API_URL: string
 }
 
 interface ImportMeta {

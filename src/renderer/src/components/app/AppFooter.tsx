@@ -1,13 +1,11 @@
 import { ComponentProps } from 'react'
 import clsx from 'clsx'
+import AppVersions from './AppVersions'
 
 export default function AppFooter({ className, ...props }: ComponentProps<'footer'>): JSX.Element {
-  const commitHash = import.meta.env.VITE_APP_COMMIT_HASH ?? 'dev'
   return (
     <footer {...props} className={clsx(className, 'flex px-4 py-2 text-xs justify-between')}>
-      <div className="text-[10px] text-neutral-400 font-mono">
-        DovaOS Ver. {commitHash.substring(commitHash.length - 6, commitHash.length)}
-      </div>
+      <AppVersions />
       <nav className="space-x-2">
         {links.map(([label, href], i) => (
           <a
@@ -15,7 +13,7 @@ export default function AppFooter({ className, ...props }: ComponentProps<'foote
             href={href}
             target="_blank"
             rel="noreferrer"
-            className=" underline-offset-4 hover:underline"
+            className=" underline-offset-4 hover:underline text-pink-300/50 hover:text-pink-400 transition-all"
           >
             {label}
           </a>
