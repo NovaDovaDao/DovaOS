@@ -33,16 +33,12 @@ const GlowingLogo = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="relative w-48">
+    <div className="relative w-48 h-8">
       <div ref={containerRef} className="relative w-full">
         <div className="absolute inset-0 flex items-center justify-center animate-float">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 blur-xl opacity-50 animate-pulse" />
-            <DovaLogo
-              width={120}
-              height={30}
-              className="relative z-10 transition-transform hover:scale-110 duration-300"
-            />
+            <DovaLogo className="relative h-8 w-48" />
           </div>
         </div>
       </div>

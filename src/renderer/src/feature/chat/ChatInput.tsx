@@ -3,8 +3,7 @@ import { useState } from 'react'
 import { Button, Textarea } from '@headlessui/react'
 import { Send } from 'lucide-react'
 import { useSendMessage } from './useChat'
-import AppAlert from '../../components/app/AppAlert'
-import GlowingLogo from '@renderer/components/app/GlowingLogo'
+import AppAlert from '@renderer/components/app/AppAlert'
 
 export default function ChatInput(): JSX.Element {
   const { sendMessage, isPending, error } = useSendMessage()
@@ -24,11 +23,6 @@ export default function ChatInput(): JSX.Element {
   return (
     <div className="relative w-full">
       <form onSubmit={handleSendMessage} className="relative">
-        {/* Logo */}
-        <div className="flex justify-center mb-12">
-          <GlowingLogo />
-        </div>
-
         {error && <AppAlert className="mb-4">{error?.message}</AppAlert>}
 
         {/* Input container */}

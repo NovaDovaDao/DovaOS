@@ -6,8 +6,9 @@ import { useChat } from '@renderer/feature/chat/useChat'
 import ChatInput from './ChatInput'
 import AppAlert from '@renderer/components/app/AppAlert'
 import { Message } from './chat.types'
-import AgentModal from '@renderer/components/agent/AgentModal'
-import AgentsDialog from '@renderer/components/agent/AgentsDialog'
+import GlowingLogo from '@renderer/components/app/GlowingLogo'
+// import AgentModal from '@renderer/components/agent/AgentModal'
+// import AgentsDialog from '@renderer/components/agent/AgentsDialog'
 
 const ChatWindow = (): JSX.Element => {
   const { error, messages, isLoading } = useChat()
@@ -24,17 +25,18 @@ const ChatWindow = (): JSX.Element => {
   }, [isLoading, messages])
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center">
+    <div className="flex flex-col h-full items-center justify-center">
+      <GlowingLogo />
       <div className="w-full max-w-3xl px-4">
         {/* Action Buttons */}
         <div className="fixed top-8 right-8 z-50 flex gap-4 animate-fadeIn">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            <AgentsDialog />
+            {/* <AgentsDialog /> */}
           </div>
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            <AgentModal />
+            {/* <AgentModal /> */}
           </div>
         </div>
 
