@@ -1,19 +1,17 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 interface AppState {
-  isChatOpen: boolean;
-  isNavOpen: boolean;
-  isAgentModalOpen: boolean;
-  setIsChatOpen: (open: boolean) => void;
-  setIsNavOpen: (open: boolean) => void;
-  setIsAgentModalOpen: (open: boolean) => void;
+  agentId: string | null
+  setAgentId: (id: string | null) => void
+
+  isAgentModalOpen: boolean
+  setIsAgentModalOpen: (open: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  isChatOpen: false,
-  isNavOpen: false,
+  agentId: null,
+  setAgentId: (id): void => set({ agentId: id }),
+
   isAgentModalOpen: false,
-  setIsChatOpen: (open) => set({ isChatOpen: open }),
-  setIsNavOpen: (open) => set({ isNavOpen: open }),
-  setIsAgentModalOpen: (open) => set({ isAgentModalOpen: open }),
-}));
+  setIsAgentModalOpen: (open): void => set({ isAgentModalOpen: open })
+}))

@@ -4,26 +4,17 @@ import { Users } from 'lucide-react'
 import { useState } from 'react'
 import AgentList from '@renderer/feature/agents/AgentsList'
 import clsx from 'clsx'
+import AppButton from '../../components/app/AppButton'
 
 export default function AgentsDialog(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className={clsx(
-          'relative flex items-center gap-2 rounded-lg bg-black/40 backdrop-blur-sm',
-          'py-2 px-4 text-sm font-medium text-white shadow-lg',
-          'transition-all duration-300 ease-out',
-          'hover:bg-black/60 hover:scale-105 hover:shadow-purple-500/20',
-          'focus:outline-none focus:ring-2 focus:ring-purple-500/40',
-          'group'
-        )}
-      >
+      <AppButton onClick={() => setIsOpen(true)}>
         <Users className="w-4 h-4 transition-transform group-hover:scale-110" />
         View Agents
-      </button>
+      </AppButton>
 
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
         {/* Backdrop with blur effect */}

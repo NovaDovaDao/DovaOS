@@ -1,49 +1,52 @@
 // src/renderer/src/feature/chat/ChatWindow.tsx
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import Markdown from 'markdown-to-jsx'
-import { useChat } from '@renderer/components/chat/useChat'
-import ChatInput from '../../components/chat/ChatInput'
-import AppAlert from '@renderer/components/app/AppAlert'
+import { useAppStore } from '@renderer/stores/app'
+import { useChat, useSendMessage } from './useChat'
 import GlowingLogo from '@renderer/components/app/GlowingLogo'
-// import AgentModal from '@renderer/components/agent/AgentModal'
-// import AgentsDialog from '@renderer/components/agent/AgentsDialog'
+import AppAlert from '@renderer/components/app/AppAlert'
+import ChatInput from '@renderer/components/chat/ChatInput'
+import { Message } from './chat.types'
+import AgentModal from '../agents/AgentModal'
+import AgentsDialog from '../agents/AgentsDialog'
 
 const ChatWindow = (): JSX.Element => {
-  const { error, messages, isLoading } = useChat()
-
-  const chatLog = useMemo(() => {
-    return messages.sort((a, b) => a.timestamp - b.timestamp)
-  }, [messages])
+  const { agentId } = useAppStore()
+  const { error, messages, isLoading } = useChat(agentId)
+  const { sendMessage, isPending } = useSendMessage(agentId)
 
   const lastEl = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (!isLoading && messages && lastEl.current) {
       lastEl.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [isLoading, messages])
+  }, [isLoading, JSON.stringify(messages)])
 
   return (
-    <div className="flex flex-col h-full items-center justify-center">
-      <GlowingLogo />
-      <div className="w-full max-w-3xl px-4">
-        {/* Action Buttons */}
-        <div className="fixed top-8 right-8 z-50 flex gap-4 animate-fadeIn">
+    <div className="flex flex-col h-full">
+      <header className="flex items-center justify-between p-4 bg-black border-b">
+        <GlowingLogo />
+        <nav className="flex gap-4">
+          {/* Action Buttons */}
+          {/* <div className="fixed top-8 right-8 z-50 flex gap-4 animate-fadeIn">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            {/* <AgentsDialog /> */}
           </div>
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            {/* <AgentModal /> */}
           </div>
-        </div>
-
+        </div> */}
+          <AgentModal />
+          <AgentsDialog />
+        </nav>
+      </header>
+      <div className="flex-1 px-4 overflow-auto">
         {/* Messages Area */}
         {messages.length > 0 && (
           <div className="relative flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent mb-8">
             <div className="space-y-4">
-              {chatLog.map((message, i) => (
+              {messages.map((message, i) => (
                 <article
                   key={message.timestamp}
                   className={`flex flex-col w-full relative group animate-slideIn ${
@@ -51,7 +54,7 @@ const ChatWindow = (): JSX.Element => {
                   }`}
                 >
                   <ChatMessage message={message} />
-                  {chatLog.length - 1 > i && (
+                  {messages.length - 1 > i && (
                     <hr className="border-white/10 w-16 mx-auto my-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
                   )}
                 </article>
@@ -63,10 +66,13 @@ const ChatWindow = (): JSX.Element => {
 
         {/* Error Alert */}
         {error && <AppAlert className="mb-4">{error.message}</AppAlert>}
-
-        {/* Chat Input */}
-        <ChatInput />
       </div>
+      {/* Chat Input */}
+      <ChatInput
+        className="p-4"
+        isLoading={isPending}
+        onSubmit={(message) => sendMessage({ content: message })}
+      />
     </div>
   )
 }

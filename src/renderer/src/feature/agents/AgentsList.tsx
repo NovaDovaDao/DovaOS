@@ -1,41 +1,27 @@
-import { ComponentProps, useState } from 'react'
-import { Radio, RadioGroup } from '@headlessui/react'
+import { ComponentProps } from 'react'
 import { useAgents } from './useAgents'
-import { CheckCircle } from 'lucide-react'
+import { User } from 'lucide-react'
 import clsx from 'clsx'
+import { useAppStore } from '@renderer/stores/app'
 
 export default function AgentList({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   const { agents } = useAgents()
-  const [selected, setSelected] = useState(agents[0]?.id)
+  const { setAgentId } = useAppStore()
 
   return (
     <div {...props} className={clsx(className, '')}>
-      <RadioGroup
-        by="name"
-        value={selected}
-        onChange={setSelected}
-        aria-label="Server size"
-        className="space-y-2"
-      >
-        {agents.map((agent) => (
-          <Radio
-            key={agent.id}
-            value={agent.id}
-            className="group relative flex cursor-pointer rounded-lg bg-white/5 py-4 px-5 text-white shadow-md transition focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-white/10"
-          >
-            <div className="flex w-full items-center justify-between">
-              <div className="text-sm/6">
-                <p className="font-semibold text-white">{agent.name}</p>
-                <div className="flex gap-2 text-white/50">
-                  <div>{agent.name}</div>
-                  <div aria-hidden="true">&middot;</div>
-                </div>
-              </div>
-              <CheckCircle className="size-6 fill-white opacity-0 transition group-data-[checked]:opacity-100" />
-            </div>
-          </Radio>
-        ))}
-      </RadioGroup>
+      {agents.map((agent, i) => (
+        <button
+          key={i}
+          onClick={() => setAgentId(agent.id)}
+          className="bg-rose-600/10 rounded-xl p-4 text-rose-300/70 relative"
+        >
+          <div className="mx-auto w-12 h-12 flex items-center justify-center bg-rose-600/20 rounded-full">
+            <User size={18} className="text-white" />
+          </div>
+          <div>{agent.name}</div>
+        </button>
+      ))}
     </div>
   )
 }
