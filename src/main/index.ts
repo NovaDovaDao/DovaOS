@@ -61,12 +61,12 @@ app.whenReady().then(() => {
   const backendPath = join(appPath, 'src-eliza')
   backendProcess = spawn(
     'pnpm',
-    // ['run', 'start', '--character=./characters/spanish_trump.character.json'],
-    [
-      'run',
-      'start',
-      '--characters="characters/nova.json, characters/lpmanager.character.json, --character=./characters/spanish_trump.character.json'
-    ],
+    ['run', 'start', '--character=./characters/spanish_trump.character.json'],
+    // [
+    //   'run',
+    //   'start',
+    //   '--characters="characters/nova.json, characters/lpmanager.character.json, --character=./characters/spanish_trump.character.json, --character=./characters/media.json, --character=./characters/creatives.json'
+    // ],
     { cwd: backendPath }
   )
 
