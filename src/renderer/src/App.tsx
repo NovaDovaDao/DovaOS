@@ -8,6 +8,7 @@ const queryClient = new QueryClient()
 
 function App(): JSX.Element {
   const { agentId } = useAppStore()
+  // window.electron.ipcRenderer.on('backend-channel', console.log)
 
   return (
     <QueryClientProvider client={queryClient}>

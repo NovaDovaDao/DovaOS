@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { getDovaChatHistory, Message, sendDovaMessage } from '@renderer/api/ghosts-client'
-import { sendElizaMessage } from '@renderer/api/eliza-client'
+import { getElizaMemories, sendElizaMessage } from '@renderer/api/eliza-client'
 
 const DOVA_ID = 'dova'
 
@@ -15,10 +15,12 @@ export const useChat = (agentId: string | null) => {
   const { data, ...rest } = useQuery({
     queryKey,
     queryFn: async () => {
+      if (!agentId) return []
+
       if (isDova(agentId)) {
-        return getDovaChatHistory()
+        return await getDovaChatHistory()
       }
-      return []
+      return await getElizaMemories(agentId)
     },
     enabled: !!agentId,
     retryDelay: 1000 * 30

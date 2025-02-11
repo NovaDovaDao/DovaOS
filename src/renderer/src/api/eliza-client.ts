@@ -1,3 +1,4 @@
+import { AgentConfiguration } from '@renderer/feature/agents/agent.types'
 import axios from 'axios'
 
 const client = axios.create({
@@ -10,6 +11,46 @@ interface AgentsResponse {
 export const getAgents = async (): Promise<AgentsResponse['agents']> => {
   const { data } = await client.get<AgentsResponse>('/agents')
   return data.agents
+}
+
+export const getAgent = async (agentId: string): Promise<AgentConfiguration> => {
+  const { data } = await client.get<AgentConfiguration>('/agents/' + agentId)
+  return data
+}
+
+export const setAgent = async (agentId: string, character: AgentConfiguration['character']) => {
+  const { data } = await client.post<AgentConfiguration>('/agents/' + agentId + '/set', character)
+  console.log('setting agent settings', data)
+  return data
+}
+
+interface ElizaMemoriesResponse {
+  agentId: string
+  roomId: string
+  memories: [
+    {
+      id: string
+      userId: string
+      agentId: string
+      createdAt: number
+      content: {
+        text: string
+        source: string
+        attachments: []
+      }
+      embedding: {
+        type: string
+        data: number[]
+      }
+      roomId: string
+      unique: number
+    }
+  ]
+}
+export const getElizaMemories = async (agentId: string): Promise<ElizaMemoriesResponse> => {
+  const { data } = await client.get<ElizaMemoriesResponse>(agentId + '/memories')
+  console.log('agent memories!!!!', data)
+  return data
 }
 
 type AgentMessageResponse = {

@@ -4,16 +4,18 @@ import { formatDistanceToNow } from 'date-fns'
 import Markdown from 'markdown-to-jsx'
 import { useAppStore } from '@renderer/stores/app'
 import { useChat, useSendMessage } from './useChat'
-import GlowingLogo from '@renderer/components/app/GlowingLogo'
 import AppAlert from '@renderer/components/app/AppAlert'
 import ChatInput from '@renderer/components/chat/ChatInput'
 import AgentModal from '../agents/AgentModal'
-import AgentsDialog from '../agents/AgentsDialog'
+// import AgentsDialog from '../agents/AgentsDialog'
 import { Message } from '@renderer/api/ghosts-client'
 import AppLogo from '@renderer/components/app/AppLogo'
+import { useAgent } from '../agents/useAgents'
 
 const ChatWindow = (): JSX.Element => {
   const { agentId, setAgentId } = useAppStore()
+  const { agent } = useAgent(agentId)
+
   const { error, messages, isLoading } = useChat(agentId)
   const { sendMessage, isPending } = useSendMessage(agentId)
 
@@ -31,17 +33,8 @@ const ChatWindow = (): JSX.Element => {
           <AppLogo />
         </button>
         <nav className="flex gap-4">
-          {/* Action Buttons */}
-          {/* <div className="fixed top-8 right-8 z-50 flex gap-4 animate-fadeIn">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-          </div>
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-          </div>
-        </div> */}
-          <AgentModal />
-          <AgentsDialog />
+          <AgentModal agentConfigs={agent} />
+          {/* <AgentsDialog /> */}
         </nav>
       </header>
       <div className="flex-1 px-4 overflow-auto">
@@ -66,10 +59,18 @@ const ChatWindow = (): JSX.Element => {
             </div>
           </div>
         )}
-
-        {/* Error Alert */}
-        {error && <AppAlert className="mb-4">{error.message}</AppAlert>}
       </div>
+
+      {/* Error Alert */}
+      {error && <AppAlert className="mb-4 mx-4">{error.message}</AppAlert>}
+
+      {isPending && (
+        <p className="px-4 text-xs">
+          <span className="text-rose-300 animate-pulse">{agent?.character?.name ?? 'Agent'}</span>{' '}
+          is responding...
+        </p>
+      )}
+
       {/* Chat Input */}
       <ChatInput
         className="p-4"
@@ -82,7 +83,7 @@ const ChatWindow = (): JSX.Element => {
 
 const ChatMessage = ({ message }: { message: Message }): JSX.Element => (
   <div
-    className={`max-w-[85%] sm:max-w-[75%] py-4 px-6 rounded-2xl transition-transform duration-300 hover:scale-[1.02] ${
+    className={`max-w-[85%] sm:max-w-[75%] py-4 px-6 rounded-2xl transition-transform duration-300 ${
       message.role === 'user'
         ? 'ml-auto bg-pink-500/10 hover:bg-pink-500/20'
         : 'mr-auto bg-purple-500/10 hover:bg-purple-500/20'

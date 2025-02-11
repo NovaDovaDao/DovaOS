@@ -24,6 +24,8 @@ import {
 import { clsx } from 'clsx'
 import { useState } from 'react'
 import AppButton from '@renderer/components/app/AppButton'
+import { AgentConfiguration } from './agent.types'
+import { useUpdateAgent } from './useAgents'
 
 interface PlatformConfig {
   enabled: boolean
@@ -39,13 +41,22 @@ interface AgentPlatforms {
   openai: PlatformConfig
 }
 
-export default function AgentModal(): JSX.Element {
+export default function AgentModal({
+  agentConfigs
+}: {
+  agentConfigs?: AgentConfiguration
+}): JSX.Element {
   const { isAgentModalOpen, setIsAgentModalOpen } = useAppStore()
+  const {
+    DISCORD_APPLICATION_ID = '',
+    DISCORD_API_TOKEN = '',
+    TWITTER_USERNAME = ''
+  } = agentConfigs?.character?.secrets ?? {}
   const [platforms, setPlatforms] = useState<AgentPlatforms>({
     x: {
       enabled: false,
       credentials: {
-        username: '',
+        username: TWITTER_USERNAME,
         email: '',
         password: ''
       }
@@ -53,8 +64,8 @@ export default function AgentModal(): JSX.Element {
     discord: {
       enabled: false,
       credentials: {
-        applicationId: '',
-        apiToken: ''
+        applicationId: DISCORD_APPLICATION_ID,
+        apiToken: DISCORD_API_TOKEN
       }
     },
     telegram: {
@@ -70,6 +81,7 @@ export default function AgentModal(): JSX.Element {
       }
     }
   })
+
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({})
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({})
 
@@ -98,6 +110,23 @@ export default function AgentModal(): JSX.Element {
         }
       }
     }))
+  }
+
+  const { updateAgent } = useUpdateAgent(agentConfigs?.id)
+  const handleSave = async () => {
+    if (!agentConfigs?.character) return
+    setIsAgentModalOpen(false)
+    updateAgent({
+      settings: {
+        ...agentConfigs.character,
+        secrets: {
+          ...agentConfigs.character.secrets,
+          TWITTER_USERNAME: platforms.x.credentials?.username ?? '',
+          DISCORD_APPLICATION_ID: platforms.discord.credentials?.applicationId ?? '',
+          DISCORD_API_TOKEN: platforms.discord.credentials?.apiToken ?? ''
+        }
+      }
+    })
   }
 
   return (
@@ -473,10 +502,7 @@ export default function AgentModal(): JSX.Element {
                 Cancel
               </Button>
               <Button
-                onClick={() => {
-                  // Handle save logic here
-                  setIsAgentModalOpen(false)
-                }}
+                onClick={handleSave}
                 className={clsx(
                   'px-4 py-2 rounded-lg w-full sm:w-auto',
                   'bg-gradient-to-r from-pink-500 to-purple-500',

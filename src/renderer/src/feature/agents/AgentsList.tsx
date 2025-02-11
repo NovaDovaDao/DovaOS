@@ -14,6 +14,8 @@ export default function AgentList({
   const { setAgentId } = useAppStore()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
+  if (agents.length < 1) return <p>No agents available</p>
+
   return (
     <div
       {...props}

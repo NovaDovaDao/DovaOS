@@ -2,11 +2,14 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { spawn } from 'child_process'
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
+
+let mainWindow: BrowserWindow
+let backendProcess: ChildProcessWithoutNullStreams
 
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -36,8 +39,6 @@ function createWindow(): void {
   }
 }
 
-let backendProcess
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -61,7 +62,7 @@ app.whenReady().then(() => {
   const backendPath = join(appPath, 'src-eliza')
   backendProcess = spawn(
     'pnpm',
-    ['run', 'start', '--character=./characters/spanish_trump.character.json'],
+    ['run', 'start', '--character=./characters/nova.character.json'],
     // [
     //   'run',
     //   'start',
@@ -70,8 +71,13 @@ app.whenReady().then(() => {
     { cwd: backendPath }
   )
 
+  const sendDataToRenderer = (data: unknown): void => {
+    mainWindow.webContents.send('backend-channel', data) // Send data to the renderer
+  }
+
   backendProcess.stdout.on('data', (data) => {
     console.log(`Backend: ${data}`)
+    sendDataToRenderer(data)
   })
 
   backendProcess.stderr.on('data', (data) => {
