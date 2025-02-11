@@ -56,7 +56,6 @@ export const useSendMessage = (agentId: string | null) => {
       // Eliza logic
       const setElizaChatMessage = (message: Message) =>
         queryClient.setQueryData(['chat', agentId], (oldData) => {
-          console.log('oldData', oldData, message)
           if (!!oldData && Array.isArray(oldData)) {
             oldData.push(message)
             return

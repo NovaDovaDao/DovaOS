@@ -8,8 +8,7 @@ const queryClient = new QueryClient()
 
 function App(): JSX.Element {
   const { agentId } = useAppStore()
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-  // console.log(ipcHandle())
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="h-screen flex flex-col">
