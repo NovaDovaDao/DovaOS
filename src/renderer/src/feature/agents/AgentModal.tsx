@@ -27,61 +27,48 @@ import AppButton from '@renderer/components/app/AppButton'
 import { AgentConfiguration } from './agent.types'
 import { useUpdateAgent } from './useAgents'
 
-interface PlatformConfig {
-  enabled: boolean
-  credentials?: {
-    [key: string]: string
-  }
-}
-
-interface AgentPlatforms {
-  x: PlatformConfig
-  discord: PlatformConfig
-  telegram: PlatformConfig
-  openai: PlatformConfig
-}
-
 export default function AgentModal({
-  agentConfigs
+  characterConfig
 }: {
-  agentConfigs?: AgentConfiguration
+  characterConfig: AgentConfiguration['character'] | null
 }): JSX.Element {
-  const { isAgentModalOpen, setIsAgentModalOpen } = useAppStore()
-  const {
-    DISCORD_APPLICATION_ID = '',
-    DISCORD_API_TOKEN = '',
-    TWITTER_USERNAME = ''
-  } = agentConfigs?.character?.secrets ?? {}
-  const [platforms, setPlatforms] = useState<AgentPlatforms>({
+  const { clients = [], settings: { secrets = {} } = {} } = characterConfig ?? {
+    clients: [],
+    settings: {
+      secrets: {}
+    }
+  }
+  const [platforms, setPlatforms] = useState({
     x: {
-      enabled: false,
+      enabled: clients.includes('twitter'),
       credentials: {
-        username: TWITTER_USERNAME,
-        email: '',
-        password: ''
+        email: secrets.TWITTER_EMAIL ?? '',
+        password: secrets.TWITTER_PASSWORD ?? '',
+        username: secrets.TWITTER_USERNAME ?? ''
       }
     },
     discord: {
-      enabled: false,
+      enabled: clients.includes('discord'),
       credentials: {
-        applicationId: DISCORD_APPLICATION_ID,
-        apiToken: DISCORD_API_TOKEN
-      }
-    },
-    telegram: {
-      enabled: false,
-      credentials: {
-        botToken: ''
+        apiToken: secrets.DISCORD_API_TOKEN ?? '',
+        applicationId: secrets.DISCORD_APPLICATION_ID ?? ''
       }
     },
     openai: {
-      enabled: false,
+      enabled: clients.length > 0,
       credentials: {
-        apiKey: ''
+        apiKey: secrets.OPENAI_API_KEY ?? ''
+      }
+    },
+    telegram: {
+      enabled: clients.includes('telegram'),
+      credentials: {
+        botToken: secrets.TELEGRAM_BOT_TOKEN ?? ''
       }
     }
   })
 
+  const [open, setOpen] = useState(false)
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({})
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({})
 
@@ -99,7 +86,7 @@ export default function AgentModal({
     }))
   }
 
-  const updateCredential = (platform: keyof AgentPlatforms, field: string, value: string) => {
+  const updateCredential = (platform: keyof typeof platforms, field: string, value: string) => {
     setPlatforms((prev) => ({
       ...prev,
       [platform]: {
@@ -112,35 +99,55 @@ export default function AgentModal({
     }))
   }
 
-  const { updateAgent } = useUpdateAgent(agentConfigs?.id)
+  const { mutateAsync: updateAgent } = useUpdateAgent(characterConfig?.id)
   const handleSave = async () => {
-    if (!agentConfigs?.character) return
-    setIsAgentModalOpen(false)
-    updateAgent({
-      settings: {
-        ...agentConfigs.character,
-        secrets: {
-          ...agentConfigs.character.secrets,
-          TWITTER_USERNAME: platforms.x.credentials?.username ?? '',
-          DISCORD_APPLICATION_ID: platforms.discord.credentials?.applicationId ?? '',
-          DISCORD_API_TOKEN: platforms.discord.credentials?.apiToken ?? ''
+    if (!characterConfig) return
+
+    const socialClients = Object.entries(platforms).reduce((result: string[], [key, value]) => {
+      if (value.enabled) {
+        switch (key) {
+          case 'x':
+            result.push('twitter')
+            break
+          case 'discord':
+            result.push('discord')
+            break
+          case 'telegram':
+            result.push('telegram')
+            break
+        }
+      }
+      return result
+    }, [])
+    await updateAgent({
+      character: {
+        ...characterConfig,
+        clients: ['direct'].concat(socialClients),
+        settings: {
+          ...characterConfig.settings,
+
+          secrets: {
+            ...characterConfig.settings.secrets,
+            DISCORD_API_TOKEN: platforms.discord.credentials?.apiToken,
+            DISCORD_APPLICATION_ID: platforms.discord.credentials?.applicationId,
+            OPENAI_API_KEY: platforms.openai.credentials.apiKey,
+            TELEGRAM_BOT_TOKEN: platforms.telegram.credentials.botToken,
+            TWITTER_USERNAME: platforms.x.credentials?.username
+          }
         }
       }
     })
+    setOpen(false)
   }
 
   return (
     <>
-      <AppButton onClick={() => setIsAgentModalOpen(true)}>
+      <AppButton onClick={() => setOpen(true)}>
         <Settings className="w-4 h-4 transition-transform group-hover:rotate-180" />
         Configure Agent
       </AppButton>
 
-      <Dialog
-        open={isAgentModalOpen}
-        onClose={() => setIsAgentModalOpen(false)}
-        className="relative z-50"
-      >
+      <Dialog open={open} onClose={() => setOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">

@@ -49,7 +49,6 @@ interface ElizaMemoriesResponse {
 }
 export const getElizaMemories = async (agentId: string): Promise<ElizaMemoriesResponse> => {
   const { data } = await client.get<ElizaMemoriesResponse>(agentId + '/memories')
-  console.log('agent memories!!!!', data)
   return data
 }
 

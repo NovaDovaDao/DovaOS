@@ -20,7 +20,14 @@ export const useChat = (agentId: string | null) => {
       if (isDova(agentId)) {
         return await getDovaChatHistory()
       }
-      return await getElizaMemories(agentId)
+      const response = await getElizaMemories(agentId)
+      return response.memories.map<Message>((mem) => {
+        return {
+          content: mem.content.text,
+          role: 'user',
+          timestamp: mem.createdAt
+        }
+      })
     },
     enabled: !!agentId,
     retryDelay: 1000 * 30

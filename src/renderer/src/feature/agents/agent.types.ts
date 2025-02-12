@@ -4,8 +4,8 @@ export interface AgentConfiguration {
     name: string
     clients: string[]
     modelProvider: string
-    secrets?: Record<string, string>
     settings: {
+      secrets?: Record<string, string>
       voice: {
         model: string
       }
@@ -14,16 +14,13 @@ export interface AgentConfiguration {
     bio: string[]
     lore: string[]
     knowledge: string[]
-    messageExamples: [
-      [
-        {
-          user: string
-          content: {
-            text: string
-          }
-        }
-      ]
-    ]
+    messageExamples: {
+      user: string
+      content: {
+        text: string
+      }
+    }[][]
+
     postExamples: string[]
     topics: string[]
     style: {

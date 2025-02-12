@@ -36,18 +36,19 @@ export default function AgentList({
           Dova
         </AgentBtn>
       )}
-      {agents.map((agent, i) => (
-        <AgentBtn
-          key={agent.id}
-          onClick={() => setAgentId(agent.id)}
-          isHovered={hoveredIndex === i}
-          onHover={() => setHoveredIndex(i)}
-          onLeave={() => setHoveredIndex(null)}
-          isPremium={i % 3 === 0}
-        >
-          {agent.name}
-        </AgentBtn>
-      ))}
+      {agents.length > 0 &&
+        agents.map((agent, i) => (
+          <AgentBtn
+            key={agent.id}
+            onClick={() => setAgentId(agent.id)}
+            isHovered={hoveredIndex === i}
+            onHover={() => setHoveredIndex(i)}
+            onLeave={() => setHoveredIndex(null)}
+            isPremium={i % 3 === 0}
+          >
+            {agent.name}
+          </AgentBtn>
+        ))}
     </div>
   )
 }

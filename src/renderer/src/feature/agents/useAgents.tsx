@@ -38,20 +38,16 @@ export const useUpdateAgent = (agentId?: string | null) => {
   const queryClient = useQueryClient()
   const { mutate: updateAgent, ...rest } = useMutation({
     mutationKey,
-    mutationFn: async ({ settings }: { settings: AgentConfiguration['character'] }) => {
+    mutationFn: async ({ character }: { character: AgentConfiguration['character'] }) => {
       if (!agentId) return
 
-      return setAgent(agentId, settings)
+      return setAgent(agentId, character)
     },
-    onSuccess: (settings) =>
+    onSuccess: (data) =>
       queryClient.setQueryData(
         ['agent', agentId],
         (oldData: Awaited<ReturnType<typeof getAgent>>) => {
-          console.log('ehllo?')
-          return {
-            ...oldData,
-            character: settings
-          }
+          return Object.assign(oldData, data)
         }
       )
   })
