@@ -23,7 +23,7 @@ export const useAgent = (agentId: string | null) => {
   const { data: agent, ...rest } = useQuery({
     queryKey: [FETCH_AGENT],
     queryFn: () => getAgent(agentId!),
-    enabled: !!agentId,
+    enabled: !!agentId && agentId !== 'dova',
     retryDelay: 1000 * 30
   })
 

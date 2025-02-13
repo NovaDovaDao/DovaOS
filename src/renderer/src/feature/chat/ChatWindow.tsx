@@ -33,7 +33,7 @@ const ChatWindow = (): JSX.Element => {
           <AppLogo />
         </button>
         <nav className="flex gap-4">
-          <AgentModal characterConfig={agent?.character} />
+          {agentId !== 'dova' && <AgentModal characterConfig={agent?.character} />}
           {/* <AgentsDialog /> */}
         </nav>
       </header>
