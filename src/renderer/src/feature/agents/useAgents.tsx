@@ -43,13 +43,7 @@ export const useUpdateAgent = (agentId?: string | null) => {
 
       return setAgent(agentId, character)
     },
-    onSuccess: (data) =>
-      queryClient.setQueryData(
-        ['agent', agentId],
-        (oldData: Awaited<ReturnType<typeof getAgent>>) => {
-          return Object.assign(oldData, data)
-        }
-      )
+    onSuccess: (data) => queryClient.setQueryData(['agent', agentId], () => data)
   })
   return {
     ...rest,

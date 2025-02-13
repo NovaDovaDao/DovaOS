@@ -20,7 +20,6 @@ export const getAgent = async (agentId: string): Promise<AgentConfiguration> => 
 
 export const setAgent = async (agentId: string, character: AgentConfiguration['character']) => {
   const { data } = await client.post<AgentConfiguration>('/agents/' + agentId + '/set', character)
-  console.log('setting agent settings', data)
   return data
 }
 

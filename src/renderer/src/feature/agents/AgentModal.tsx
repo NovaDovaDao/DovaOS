@@ -1,5 +1,3 @@
-// src/renderer/src/feature/agents/AgentModal.tsx
-import { useAppStore } from '@renderer/stores/app'
 import {
   Button,
   Dialog,
@@ -22,7 +20,7 @@ import {
   ChevronUp
 } from 'lucide-react'
 import { clsx } from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppButton from '@renderer/components/app/AppButton'
 import { AgentConfiguration } from './agent.types'
 import { useUpdateAgent } from './useAgents'
@@ -32,43 +30,13 @@ export default function AgentModal({
 }: {
   characterConfig: AgentConfiguration['character'] | null
 }): JSX.Element {
-  const { clients = [], settings: { secrets = {} } = {} } = characterConfig ?? {
-    clients: [],
-    settings: {
-      secrets: {}
-    }
-  }
-  const [platforms, setPlatforms] = useState({
-    x: {
-      enabled: clients.includes('twitter'),
-      credentials: {
-        email: secrets.TWITTER_EMAIL ?? '',
-        password: secrets.TWITTER_PASSWORD ?? '',
-        username: secrets.TWITTER_USERNAME ?? ''
-      }
-    },
-    discord: {
-      enabled: clients.includes('discord'),
-      credentials: {
-        apiToken: secrets.DISCORD_API_TOKEN ?? '',
-        applicationId: secrets.DISCORD_APPLICATION_ID ?? ''
-      }
-    },
-    openai: {
-      enabled: clients.length > 0,
-      credentials: {
-        apiKey: secrets.OPENAI_API_KEY ?? ''
-      }
-    },
-    telegram: {
-      enabled: clients.includes('telegram'),
-      credentials: {
-        botToken: secrets.TELEGRAM_BOT_TOKEN ?? ''
-      }
-    }
-  })
-
   const [open, setOpen] = useState(false)
+  const [platforms, setPlatforms] = useState(parseConfig(characterConfig))
+
+  useEffect(() => {
+    if (open) setPlatforms(parseConfig(characterConfig))
+  }, [open, characterConfig])
+
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({})
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({})
 
@@ -139,7 +107,6 @@ export default function AgentModal({
     })
     setOpen(false)
   }
-
   return (
     <>
       <AppButton onClick={() => setOpen(true)}>
@@ -498,7 +465,7 @@ export default function AgentModal({
             {/* Action Buttons */}
             <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3">
               <Button
-                onClick={() => setIsAgentModalOpen(false)}
+                onClick={() => setOpen(false)}
                 className={clsx(
                   'px-4 py-2 rounded-lg w-full sm:w-auto',
                   'bg-white/5 text-white',
@@ -527,4 +494,37 @@ export default function AgentModal({
       </Dialog>
     </>
   )
+}
+
+const parseConfig = (characterConfig: AgentConfiguration['character'] | null) => {
+  const { clients = [], settings: { secrets = {} } = {} } = characterConfig ?? {}
+  return {
+    x: {
+      enabled: clients.includes('twitter'),
+      credentials: {
+        email: secrets.TWITTER_EMAIL ?? '',
+        password: secrets.TWITTER_PASSWORD ?? '',
+        username: secrets.TWITTER_USERNAME ?? ''
+      }
+    },
+    discord: {
+      enabled: clients.includes('discord'),
+      credentials: {
+        apiToken: secrets.DISCORD_API_TOKEN ?? '',
+        applicationId: secrets.DISCORD_APPLICATION_ID ?? ''
+      }
+    },
+    openai: {
+      enabled: clients.length > 0,
+      credentials: {
+        apiKey: secrets.OPENAI_API_KEY ?? ''
+      }
+    },
+    telegram: {
+      enabled: clients.includes('telegram'),
+      credentials: {
+        botToken: secrets.TELEGRAM_BOT_TOKEN ?? ''
+      }
+    }
+  }
 }
