@@ -2,10 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
+import { initEliza } from './eliza'
 
 let mainWindow: BrowserWindow
-let backendProcess: ChildProcessWithoutNullStreams
 
 function createWindow(): void {
   // Create the browser window.
@@ -55,34 +54,9 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  initEliza(mainWindow)
 
   createWindow()
-
-  const appPath = app.getAppPath()
-  const backendPath = join(appPath, 'src-eliza')
-  backendProcess = spawn(
-    'pnpm',
-    ['run', 'start', '--character=./characters/nova.character.json'],
-    // [
-    //   'run',
-    //   'start',
-    //   '--characters="characters/nova.json, characters/lpmanager.character.json, --character=./characters/spanish_trump.character.json, --character=./characters/media.json, --character=./characters/creatives.json'
-    // ],
-    { cwd: backendPath }
-  )
-
-  const sendDataToRenderer = (data: unknown): void => {
-    mainWindow.webContents.send('backend-channel', data) // Send data to the renderer
-  }
-
-  backendProcess.stdout.on('data', (data) => {
-    console.log(`Backend: ${data}`)
-    sendDataToRenderer(data)
-  })
-
-  backendProcess.stderr.on('data', (data) => {
-    console.error(`Backend Error: ${data}`)
-  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
