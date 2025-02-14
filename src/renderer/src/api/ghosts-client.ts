@@ -1,3 +1,4 @@
+import { AgentConfiguration } from '@renderer/feature/agents/agent.types'
 import axios from 'axios'
 
 const ghostsClient = axios.create({
@@ -21,6 +22,7 @@ export default ghostsClient
 
 export interface Message {
   content: string
+  configuration?: Partial<AgentConfiguration['character']>
   timestamp: number
   role: 'user' | 'agent' | 'system'
 }
@@ -30,7 +32,7 @@ export const getDovaChatHistory = async () => {
   return data
 }
 
-export const sendDovaMessage = async (payload: { content: Message['content'] }) => {
+export const sendDovaMessage = async (payload: { content: string }) => {
   const { data } = await ghostsClient.post<Message>('/chat', payload)
   return data
 }

@@ -100,8 +100,14 @@ const ChatMessage = ({ message }: { message: Message }): JSX.Element => (
     </header>
 
     <Markdown className="text-sm break-words prose prose-invert max-w-none">
-      {message.content}
+      {String(message.content)}
     </Markdown>
+
+    {message.configuration && (
+      <Markdown className="text-sm break-words prose prose-invert max-w-none">
+        {JSON.stringify(message.configuration, null, 2)}
+      </Markdown>
+    )}
 
     <footer className="mt-2">
       {message.role === 'agent' && (
