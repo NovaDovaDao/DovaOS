@@ -1,11 +1,10 @@
 // src/renderer/src/feature/agents/useAgentConfig.ts
 import { useState, useEffect } from 'react'
-import { AgentPlatforms } from './types'
 
 const STORAGE_KEY = 'agent-config'
 
 export const useAgentConfig = () => {
-  const [config, setConfig] = useState<AgentPlatforms>(() => {
+  const [config, setConfig] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) {
       try {
